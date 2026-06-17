@@ -1,26 +1,980 @@
-@import "tailwindcss";
+/* =====================================================================
+   Presente Especial — Design System (Next.js)
+   Mobile-first (390px ref), max 440px shell
+   Fonts: Playfair Display (display) + Inter (body/UI) + Caveat (hand)
+   Default theme: Romantico (light). Variants via [data-theme].
+   Dark mode via [data-mode="dark"].
+   ===================================================================== */
 
+/* ---------- Design Tokens (Romantico — default) ---------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand palette */
+  --rose: #d6336c;
+  --blush: #fce4ec;
+  --creme: #fff5e6;
+  --ink: #2b2330;
+  --gold: #b8860b;
+  --green: #2f9e44;
+  --neutro: #6b6470;
+  --muted: #a59ba6;
+
+  /* Surfaces */
+  --bg: #faf8f5;
+  --surface: #ffffff;
+  --surface-2: #f8f5f2;
+  --line: #e8e0db;
+  --line-soft: #f0ebe7;
+
+  /* Gradients */
+  --grad-warm: linear-gradient(135deg, #fff5e6, #fce4ec);
+  --grad-rose-gold: linear-gradient(135deg, var(--rose), var(--gold));
+
+  /* Elevation */
+  --shadow-card: 0 4px 14px rgba(43, 35, 48, 0.05);
+  --shadow-pop: 0 10px 24px rgba(214, 51, 108, 0.28);
+  --shadow-float: 0 14px 34px rgba(43, 35, 48, 0.12);
+
+  /* Radii */
+  --radius-lg: 22px;
+  --radius: 20px;
+  --radius-sm: 14px;
+
+  /* Typography */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-hand: 'Caveat', cursive;
+
+  /* Layout */
+  --shell-max: 440px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ==========================================================================
+   Theme Variants
+   ========================================================================== */
+
+/* Festa — vibrant, party-like */
+[data-theme="festa"] {
+  --rose: #ff3d81;
+  --blush: #fff0f5;
+  --creme: #fff3d6;
+  --gold: #ffd23f;
+  --grad-warm: linear-gradient(135deg, #fff0f5, #ffd23f);
+  --grad-rose-gold: linear-gradient(135deg, #ff3d81, #ffd23f);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Elegante — dark, gold-accented */
+[data-theme="elegante"] {
+  --bg: #14110f;
+  --surface: #1e1a17;
+  --surface-2: #241f1a;
+  --ink: #f0e8dd;
+  --neutro: #7a7268;
+  --muted: #5c5549;
+  --rose: #c9a24a;
+  --gold: #c9a24a;
+  --blush: #2a2521;
+  --creme: #1f1b17;
+  --line: #2a2521;
+  --line-soft: rgba(201, 162, 74, 0.1);
+  --grad-warm: linear-gradient(160deg, #1e1a17, #14110f);
+  --grad-rose-gold: linear-gradient(135deg, #c9a24a, #8c6d2a);
+  --shadow-card: 0 4px 14px rgba(0, 0, 0, 0.2);
+  --shadow-pop: 0 10px 24px rgba(201, 162, 74, 0.25);
+  --shadow-float: 0 14px 34px rgba(0, 0, 0, 0.3);
+}
+
+/* Suave — soft lavender/peach */
+[data-theme="suave"] {
+  --rose: #9775c9;
+  --blush: #f0e8ff;
+  --creme: #fff0e8;
+  --gold: #d4a76a;
+  --neutro: #8e88a0;
+  --muted: #b0a8c0;
+  --grad-warm: linear-gradient(135deg, #f0e8ff, #fff0e8);
+  --grad-rose-gold: linear-gradient(135deg, #9775c9, #d4a76a);
+}
+
+/* ==========================================================================
+   Dark Mode
+   ========================================================================== */
+
+[data-mode="dark"] {
+  --bg: #1c161f;
+  --surface: #271f2c;
+  --surface-2: #2f2635;
+  --ink: #f4eef5;
+  --neutro: #b8aebf;
+  --muted: #8a7f92;
+  --line: rgba(255, 255, 255, 0.1);
+  --line-soft: rgba(255, 255, 255, 0.06);
+  --blush: #3a2330;
+  --creme: #332a1c;
+  --grad-warm: linear-gradient(135deg, #3a2430, #332a1c);
+  --shadow-card: 0 4px 14px rgba(0, 0, 0, 0.25);
+  --shadow-float: 0 14px 34px rgba(0, 0, 0, 0.35);
+}
+
+/* Elegante already has its own dark surfaces — no extra overrides needed */
+
+/* ==========================================================================
+   Global Reset
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   App Shell
+   ========================================================================== */
+
+.app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: var(--shell-max);
+  margin: 0 auto;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(43, 35, 48, 0.12);
+}
+
+.app--warm {
+  background: linear-gradient(170deg, #ffe3ee 0%, #fff5e6 55%, #fff 100%);
+}
+
+.app--cream {
+  background: linear-gradient(175deg, #fff5e6, #ffffff 45%);
+}
+
+[data-theme="elegante"] .app--warm,
+[data-theme="elegante"] .app--cream {
+  background: var(--grad-warm);
+}
+
+/* ==========================================================================
+   Screen
+   ========================================================================== */
+
+.screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 22px;
+  gap: 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.screen--center {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.screen--pad-lg {
+  padding: 24px;
+}
+
+/* ==========================================================================
+   App Bar
+   ========================================================================== */
+
+.appbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 6px 18px;
+}
+
+.appbar .back {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: var(--ink);
+  flex-shrink: 0;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.appbar .back:hover {
+  background: var(--surface-2);
+}
+
+.appbar h1 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* ==========================================================================
+   Brand
+   ========================================================================== */
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.brand .mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--grad-rose-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.brand .name {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.4px;
+  margin: 0;
+}
+
+.h1 {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.h2 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.serif-italic {
+  font-family: var(--font-display);
+  font-style: italic;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--neutro);
+  font-weight: 700;
+}
+
+.eyebrow--rose {
+  color: var(--rose);
+}
+
+.lead {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--neutro);
+  margin: 0;
+}
+
+.muted {
+  color: var(--neutro);
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 54px;
+  border: none;
+  border-radius: 16px;
+  padding: 0 20px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+
+.btn:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.btn:focus-visible {
+  outline: 3px solid rgba(214, 51, 108, 0.4);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: var(--rose);
+  color: #fff;
+  box-shadow: var(--shadow-pop);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.04);
+}
+
+.btn-secondary {
+  background: var(--blush);
+  color: var(--rose);
+}
+
+.btn-secondary:hover {
+  filter: brightness(0.97);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1.5px solid var(--line);
+  color: var(--neutro);
+}
+
+.btn-ghost:hover {
+  background: var(--surface-2);
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold), #d4a76a);
+  color: #fff;
+  box-shadow: 0 12px 28px rgba(184, 134, 11, 0.3);
+}
+
+.btn-gold:hover {
+  filter: brightness(1.06);
+}
+
+.btn-success {
+  background: var(--green);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(47, 158, 68, 0.3);
+}
+
+.btn-sm {
+  height: 38px;
+  border-radius: 12px;
+  font-size: 13px;
+  width: auto;
+  padding: 0 16px;
+}
+
+.btn-row {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-row .btn {
+  width: auto;
+}
+
+.btn-row .btn.grow {
+  flex: 1;
+}
+
+/* ==========================================================================
+   Inputs
+   ========================================================================== */
+
+.field {
+  margin-bottom: 16px;
+}
+
+.label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.label .opt {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  font-size: 16px;
+  color: var(--ink);
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.textarea {
+  resize: vertical;
+  line-height: 1.55;
+  min-height: 100px;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--muted);
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--rose);
+  box-shadow: 0 0 0 3px rgba(214, 51, 108, 0.12);
+}
+
+/* ==========================================================================
+   Choice Chips (event type selection)
+   ========================================================================== */
+
+.choice-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.choice {
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--surface);
+  color: var(--neutro);
+  border: 1px solid var(--line);
+  padding: 9px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.choice[aria-pressed="true"],
+.choice.is-active {
+  background: var(--rose);
+  color: #fff;
+  border-color: var(--rose);
+}
+
+/* ==========================================================================
+   Upload
+   ========================================================================== */
+
+.upload {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: var(--surface-2);
+  border: 1.5px dashed var(--line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: border-color 0.15s ease;
+}
+
+.upload:hover {
+  border-color: var(--rose);
+}
+
+.upload .ico {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--blush);
+  color: var(--rose);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.upload .upl-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--rose);
+}
+
+.upload .upl-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.upload .check {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--green);
+  color: #fff;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.upload--center {
+  flex-direction: column;
+  text-align: center;
+}
+
+.upload--center .check {
+  margin: 0;
+}
+
+/* ==========================================================================
+   Status Chips
+   ========================================================================== */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.chip--pending {
+  background: #fff4d6;
+  color: var(--gold);
+}
+
+.chip--approved {
+  background: #e3f4e7;
+  color: var(--green);
+}
+
+.chip--rejected {
+  background: #fce4ec;
+  color: var(--rose);
+}
+
+[data-mode="dark"] .chip--pending {
+  background: #3a2f12;
+}
+
+[data-mode="dark"] .chip--approved {
+  background: #16331c;
+}
+
+[data-mode="dark"] .chip--rejected {
+  background: #3a1a28;
+}
+
+/* ==========================================================================
+   Progress Bar
+   ========================================================================== */
+
+.progress {
+  height: 9px;
+  border-radius: 20px;
+  background: #f1e3e9;
+  overflow: hidden;
+}
+
+[data-mode="dark"] .progress {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.progress > i {
+  display: block;
+  height: 100%;
+  border-radius: 20px;
+  background: var(--grad-rose-gold);
+  transition: width 0.4s ease;
+}
+
+.progress-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--neutro);
+  margin-bottom: 8px;
+}
+
+.progress-head .pct {
+  color: var(--rose);
+}
+
+/* ==========================================================================
+   Cards
+   ========================================================================== */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+}
+
+/* ==========================================================================
+   Message Card
+   ========================================================================== */
+
+.msg-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.msg-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.msg-sub {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.msg-body {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink);
+  margin: 0;
+}
+
+/* ==========================================================================
+   Avatar
+   ========================================================================== */
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--blush);
+  color: var(--rose);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.avatar--gradient {
+  background: var(--grad-rose-gold);
+  color: #fff;
+}
+
+.avatar--neutro {
+  background: var(--neutro);
+  color: #fff;
+}
+
+/* Stacked avatars */
+.stack-avatars {
+  display: flex;
+}
+
+.stack-avatars .av {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--surface);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stack-avatars .av + .av {
+  margin-left: -10px;
+}
+
+/* ==========================================================================
+   Photo
+   ========================================================================== */
+
+.photo {
+  width: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-2);
+}
+
+.photo img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.photo--placeholder {
+  background: repeating-linear-gradient(
+    135deg,
+    #f3e6dd,
+    #f3e6dd 9px,
+    #efe0d5 9px,
+    #efe0d5 18px
+  );
+}
+
+/* ==========================================================================
+   Toast
+   ========================================================================== */
+
+.toast {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-120%);
+  z-index: 100;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 14px;
+  padding: 12px 22px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  box-shadow: 0 8px 22px rgba(43, 35, 48, 0.35);
+  max-width: calc(var(--shell-max) - 44px);
+  width: max-content;
+  font-size: 14px;
+  transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2),
+              opacity 0.35s ease;
+  opacity: 0;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.toast .tcheck {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--green);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Bottom Sheet
+   ========================================================================== */
+
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(43, 35, 48, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.sheet-backdrop.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sheet {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%) translateY(100%);
+  z-index: 51;
+  width: 100%;
+  max-width: var(--shell-max);
+  background: var(--surface);
+  border-radius: 22px 22px 0 0;
+  padding: 20px 22px 28px;
+  box-shadow: 0 -8px 30px rgba(43, 35, 48, 0.2);
+  transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+}
+
+.sheet.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+.sheet .grip {
+  width: 44px;
+  height: 5px;
+  border-radius: 10px;
+  background: rgba(43, 35, 48, 0.15);
+  margin: 0 auto 18px;
+}
+
+/* ==========================================================================
+   Confetti
+   ========================================================================== */
+
+.confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  opacity: 0.9;
+  animation: confetti-fall linear infinite;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Legacy: .confetti i also supported */
+.confetti i {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  opacity: 0.9;
+  animation: confetti-fall linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confetti i,
+  .confetti-piece {
+    animation: none;
+  }
+}
+
+/* ==========================================================================
+   Utility / Helper Classes
+   ========================================================================== */
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.gap-10 { gap: 10px; }
+.gap-12 { gap: 12px; }
+.gap-14 { gap: 14px; }
+.gap-16 { gap: 16px; }
+
+.mb-12 { margin-bottom: 12px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-20 { margin-bottom: 20px; }
+.mb-24 { margin-bottom: 24px; }
+
+.mt-auto { margin-top: auto; }
+.grow { flex: 1; }
+.spacer { flex: 1; }
+.hidden { display: none !important; }
+
+/* ==========================================================================
+   Scrollbar Styling (Webkit)
+   ========================================================================== */
+
+.screen::-webkit-scrollbar {
+  width: 4px;
+}
+
+.screen::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.screen::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 4px;
+}
+
+/* ==========================================================================
+   Focus & Accessibility
+   ========================================================================== */
+
+:focus-visible {
+  outline: 3px solid rgba(214, 51, 108, 0.4);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Safe Area (notched devices)
+   ========================================================================== */
+
+@supports (padding: env(safe-area-inset-bottom)) {
+  .screen {
+    padding-bottom: calc(22px + env(safe-area-inset-bottom));
+  }
 }
