@@ -102,8 +102,9 @@ export default function PainelClient({
         {msg.audio_path && (
           <audio
             controls
+            preload="metadata"
             src={msg.audio_path}
-            style={{ width: '100%', marginTop: 12, height: 40 }}
+            style={{ width: '100%', marginTop: 12, height: 40, borderRadius: 10 }}
           />
         )}
 

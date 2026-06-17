@@ -49,12 +49,13 @@ export async function processarUploadAudio(file: File): Promise<string | null> {
   const baseType = file.type.split(';')[0].trim().toLowerCase();
   if (!baseType || !ALLOWED_AUDIO.includes(baseType)) throw new Error('Formato de áudio não permitido.');
 
-  const ext = extFromMime(file.type, file.name);
+  const ext = extFromMime(baseType, file.name);
   const nome = `audios/${crypto.randomBytes(16).toString('hex')}.${ext}`;
 
+  const contentType = baseType === 'video/webm' ? 'audio/webm' : baseType;
   const blob = await put(nome, file, {
     access: 'public',
-    contentType: file.type,
+    contentType,
   });
 
   return blob.url;
