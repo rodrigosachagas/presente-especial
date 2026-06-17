@@ -146,7 +146,7 @@ export default function EnviarClient() {
               <div className="upl-title">{fotoName || 'Enviar foto'}</div>
               <div className="upl-sub">Câmera ou galeria · máx. 5 MB</div>
             </div>
-            <input type="file" accept="image/*" capture="environment" style={{ display: 'none' }}
+            <input type="file" accept="image/*" style={{ display: 'none' }}
               onChange={e => { const f = e.target.files?.[0]; if (f) { setFoto(f); setFotoName(f.name); } }} />
           </label>
         </div>
