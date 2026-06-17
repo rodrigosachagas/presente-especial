@@ -247,7 +247,12 @@ export default function AlbumClient({ nome, layout, tema, fotoCapa, mensagens }:
                 display: i === cinemaIdx ? 'flex' : 'none', flex: 1,
                 flexDirection: 'column', justifyContent: 'flex-end',
               }}>
-                <div style={{ flex: 1 }} />
+                {m.foto_path && (
+                  <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px 0' }}>
+                    <img src={m.foto_path} alt="Foto" style={{ maxWidth: '100%', maxHeight: 200, borderRadius: 12, objectFit: 'cover', boxShadow: '0 8px 24px rgba(0,0,0,.4)' }} />
+                  </div>
+                )}
+                {!m.foto_path && <div style={{ flex: 1 }} />}
                 <div className="eyebrow" style={{ color: 'var(--gold)', marginBottom: 16 }}>
                   Mensagem {String(i + 1).padStart(2, '0')} de {total}
                 </div>
@@ -285,7 +290,10 @@ export default function AlbumClient({ nome, layout, tema, fotoCapa, mensagens }:
               display: i === minimoIdx ? 'flex' : 'none', flexDirection: 'column', alignItems: 'center',
               justifyContent: 'center', textAlign: 'center', flex: 1, padding: '0 18px',
             }}>
-              <div style={{ width: 44, height: 1, background: 'var(--gold)', marginBottom: 40 }} />
+              <div style={{ width: 44, height: 1, background: 'var(--gold)', marginBottom: 30 }} />
+              {m.foto_path && (
+                <img src={m.foto_path} alt="Foto" style={{ width: 160, height: 160, objectFit: 'cover', borderRadius: '50%', marginBottom: 24, boxShadow: '0 6px 20px rgba(43,35,48,.12)' }} />
+              )}
               <p style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: 18, lineHeight: 1.55, margin: '0 0 36px' }}>{m.mensagem}</p>
               <div style={{ fontSize: 12, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--neutro)', fontWeight: 600 }}>{m.nome}</div>
               <WppBtn m={m} />
