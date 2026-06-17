@@ -36,10 +36,11 @@ export default async function PainelPage({ searchParams }: PageProps) {
     );
   }
 
-  const [contagem, pendentes, aprovadas, todas] = await Promise.all([
+  const [contagem, pendentes, aprovadas, recusadas, todas] = await Promise.all([
     contarMensagens(presente.id),
     listarMensagens(presente.id, 'PENDING'),
     listarMensagens(presente.id, 'APPROVED'),
+    listarMensagens(presente.id, 'REJECTED'),
     listarMensagens(presente.id),
   ]);
 
@@ -52,6 +53,7 @@ export default async function PainelPage({ searchParams }: PageProps) {
       contagem={contagem}
       pendentes={pendentes}
       aprovadas={aprovadas}
+      recusadas={recusadas}
       todas={todas}
       linkPublico={linkPublico}
     />

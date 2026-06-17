@@ -10,6 +10,7 @@ interface PainelClientProps {
   contagem: any;
   pendentes: any[];
   aprovadas: any[];
+  recusadas: any[];
   todas: any[];
   linkPublico: string;
 }
@@ -19,6 +20,7 @@ export default function PainelClient({
   contagem,
   pendentes,
   aprovadas,
+  recusadas,
   todas,
   linkPublico,
 }: PainelClientProps) {
@@ -27,7 +29,7 @@ export default function PainelClient({
   const c = searchParams.get('c') || '';
   const token = searchParams.get('token') || '';
 
-  const [tab, setTab] = useState<'pendentes' | 'aprovadas' | 'todas'>('pendentes');
+  const [tab, setTab] = useState<'pendentes' | 'aprovadas' | 'recusadas' | 'todas'>('pendentes');
   const [loading, setLoading] = useState<number | null>(null);
   const [copiado, setCopiado] = useState(false);
 
@@ -61,7 +63,7 @@ export default function PainelClient({
     }
   }
 
-  function renderMensagem(msg: any, showActions: boolean, showStatus: boolean) {
+  function renderMensagem(msg: any, showActions: boolean, showStatus: boolean, showRestore: boolean = false) {
     return (
       <div key={msg.id} className="card" style={{ marginBottom: 12 }}>
         <div className="msg-head">
@@ -126,6 +128,18 @@ export default function PainelClient({
             </button>
           </div>
         )}
+
+        {showRestore && (
+          <div className="btn-row" style={{ marginTop: 14 }}>
+            <button
+              className="btn btn-sm btn-success grow"
+              disabled={loading === msg.id}
+              onClick={() => acao('aprovar', msg.id)}
+            >
+              {loading === msg.id ? '...' : 'Restaurar e aprovar'}
+            </button>
+          </div>
+        )}
       </div>
     );
   }
@@ -133,12 +147,14 @@ export default function PainelClient({
   const tabs = [
     { key: 'pendentes' as const, label: 'Pendentes', count: Number(contagem.pendentes || 0) },
     { key: 'aprovadas' as const, label: 'Aprovadas', count: Number(contagem.aprovadas || 0) },
+    { key: 'recusadas' as const, label: 'Recusadas', count: Number(contagem.recusadas || 0) },
     { key: 'todas' as const, label: 'Todas', count: Number(contagem.total || 0) },
   ];
 
   const listAtual =
     tab === 'pendentes' ? pendentes :
     tab === 'aprovadas' ? aprovadas :
+    tab === 'recusadas' ? recusadas :
     todas;
 
   return (
@@ -216,6 +232,7 @@ export default function PainelClient({
               <p className="lead muted">
                 {tab === 'pendentes' && 'Nenhuma mensagem pendente.'}
                 {tab === 'aprovadas' && 'Nenhuma mensagem aprovada ainda.'}
+                {tab === 'recusadas' && 'Nenhuma mensagem recusada.'}
                 {tab === 'todas' && 'Nenhuma mensagem recebida ainda.'}
               </p>
             </div>
@@ -225,6 +242,7 @@ export default function PainelClient({
               msg,
               tab === 'pendentes',
               tab === 'todas',
+              tab === 'recusadas',
             )
           )}
         </div>
