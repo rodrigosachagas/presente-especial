@@ -46,7 +46,8 @@ export async function processarUploadFoto(file: File): Promise<string | null> {
 export async function processarUploadAudio(file: File): Promise<string | null> {
   if (!file || file.size === 0) return null;
   if (file.size > MAX_AUDIO) throw new Error('Áudio muito grande (máx. 10 MB).');
-  if (!ALLOWED_AUDIO.includes(file.type)) throw new Error('Formato de áudio não permitido.');
+  const baseType = file.type.split(';')[0].trim().toLowerCase();
+  if (!baseType || !ALLOWED_AUDIO.includes(baseType)) throw new Error('Formato de áudio não permitido.');
 
   const ext = extFromMime(file.type, file.name);
   const nome = `audios/${crypto.randomBytes(16).toString('hex')}.${ext}`;
