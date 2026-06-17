@@ -102,12 +102,27 @@ export default function PainelClient({
         )}
 
         {msg.audio_path && (
-          <audio
-            controls
-            preload="metadata"
-            src={msg.audio_path}
-            style={{ width: '100%', marginTop: 12, height: 40, borderRadius: 10 }}
-          />
+          <div style={{ marginTop: 12 }}>
+            <audio
+              controls
+              preload="metadata"
+              src={msg.audio_path}
+              style={{ width: '100%', height: 40, borderRadius: 10 }}
+              onError={(e) => {
+                const el = e.currentTarget;
+                const fallback = el.nextElementSibling as HTMLElement;
+                if (fallback) fallback.style.display = 'block';
+                el.style.display = 'none';
+              }}
+            />
+            <div style={{ display: 'none', fontSize: 13, color: 'var(--muted)', textAlign: 'center', padding: '10px 0' }}>
+              Formato não suportado neste navegador.{' '}
+              <a href={msg.audio_path} target="_blank" rel="noopener noreferrer"
+                style={{ color: 'var(--rose)', fontWeight: 600 }}>
+                Baixar áudio
+              </a>
+            </div>
+          </div>
         )}
 
         {showActions && (

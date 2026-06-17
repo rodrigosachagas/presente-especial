@@ -44,18 +44,18 @@ export default function EnviarClient() {
     navigator.mediaDevices.getUserMedia({ audio: true }).then(s => {
       streamRef.current = s;
       chunksRef.current = [];
-      let mimeType = 'audio/webm';
-      if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'audio/mp4';
-      if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = '';
+      const tryTypes = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm', ''];
+      const mimeType = tryTypes.find(t => !t || MediaRecorder.isTypeSupported(t)) || '';
       const mr = new MediaRecorder(s, mimeType ? { mimeType } : {});
       mediaRecRef.current = mr;
       mr.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data); };
       mr.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: mr.mimeType || 'audio/webm' });
+        const actualMime = mr.mimeType || 'audio/mp4';
+        const blob = new Blob(chunksRef.current, { type: actualMime });
         const url = URL.createObjectURL(blob);
         setAudioUrl(url);
-        const ext = mr.mimeType?.includes('mp4') ? 'm4a' : 'webm';
-        const file = new File([blob], `audio.${ext}`, { type: mr.mimeType || 'audio/webm' });
+        const ext = actualMime.includes('webm') ? 'webm' : 'm4a';
+        const file = new File([blob], `audio.${ext}`, { type: actualMime });
         setAudioFile(file);
         setAudioName(file.name);
       };
