@@ -54,8 +54,8 @@ function AudioPlayer({ src, small }: { src?: string; small?: boolean }) {
 
 const colors = ['#d6336c', '#b8860b', '#6b6470', '#2f9e44', '#d6336c'];
 
-export default function AlbumClient({ nome, layout, tema, mensagens }: {
-  nome: string; layout: string; tema: string; mensagens: Msg[];
+export default function AlbumClient({ nome, layout, tema, fotoCapa, mensagens }: {
+  nome: string; layout: string; tema: string; fotoCapa?: string | null; mensagens: Msg[];
 }) {
   const total = mensagens.length;
   const [livroIdx, setLivroIdx] = useState(0);
@@ -91,6 +91,11 @@ export default function AlbumClient({ nome, layout, tema, mensagens }: {
 
       {layout === 'livro' && (
         <div className="screen" style={{ background: '#fdf8ee' }}>
+          {fotoCapa && (
+            <div style={{ marginBottom: 14, textAlign: 'center' }}>
+              <img src={fotoCapa} alt={nome} style={{ width: '100%', maxHeight: 180, objectFit: 'cover', borderRadius: 12 }} />
+            </div>
+          )}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
             <span style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 600 }}>&#10084; {nome}</span>
             <span style={{ fontSize: 12, color: 'var(--muted)' }}>Pág. {livroIdx + 1} / {total}</span>
@@ -111,7 +116,7 @@ export default function AlbumClient({ nome, layout, tema, mensagens }: {
                 {m.foto_path && (
                   <img src={m.foto_path} alt="Foto" style={{ height: 120, width: 150, borderRadius: 4, objectFit: 'cover', boxShadow: '0 6px 16px rgba(43,35,48,.12)', marginBottom: 28 }} />
                 )}
-                <p style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: 21, lineHeight: 1.5, margin: '0 0 22px' }}>{m.mensagem}</p>
+                <p style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: 16, lineHeight: 1.5, margin: '0 0 22px' }}>{m.mensagem}</p>
                 <div style={{ fontSize: 13, letterSpacing: 1, color: 'var(--gold)', fontWeight: 600 }}>&mdash; {m.nome.toUpperCase()}</div>
                 <AudioPlayer src={m.audio_path} />
                 <WppBtn m={m} />
@@ -127,6 +132,11 @@ export default function AlbumClient({ nome, layout, tema, mensagens }: {
 
       {layout === 'mural' && (
         <div className="screen" style={{ background: 'var(--bg)' }}>
+          {fotoCapa && (
+            <div style={{ marginBottom: 14 }}>
+              <img src={fotoCapa} alt={nome} style={{ width: '100%', maxHeight: 160, objectFit: 'cover', borderRadius: 14 }} />
+            </div>
+          )}
           <div style={{ marginBottom: 14 }}>
             <div style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 700 }}>Mural de carinho</div>
             <div style={{ fontSize: 12, color: 'var(--muted)' }}>{total} mensagens para {nome}</div>
@@ -151,6 +161,11 @@ export default function AlbumClient({ nome, layout, tema, mensagens }: {
 
       {layout === 'tempo' && (
         <div className="screen" style={{ background: 'var(--bg)' }}>
+          {fotoCapa && (
+            <div style={{ marginBottom: 14 }}>
+              <img src={fotoCapa} alt={nome} style={{ width: '100%', maxHeight: 160, objectFit: 'cover', borderRadius: 14 }} />
+            </div>
+          )}
           <div style={{ marginBottom: 16 }}>
             <div style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 700 }}>Linha do tempo</div>
             <div style={{ fontSize: 12, color: 'var(--muted)' }}>na ordem em que chegaram</div>
@@ -179,6 +194,11 @@ export default function AlbumClient({ nome, layout, tema, mensagens }: {
 
       {layout === 'polaroid' && (
         <div className="screen" style={{ background: '#f1e9da', position: 'relative', overflow: 'auto' }}>
+          {fotoCapa && (
+            <div style={{ textAlign: 'center', marginBottom: 14 }}>
+              <img src={fotoCapa} alt={nome} style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: '50%', border: '4px solid #fff', boxShadow: '0 8px 20px rgba(43,35,48,.15)' }} />
+            </div>
+          )}
           <div style={{ textAlign: 'center', marginBottom: 16 }}>
             <div style={{ fontFamily: 'var(--font-hand)', fontSize: 34, fontWeight: 700, color: 'var(--gold)' }}>Recordações de {nome}</div>
           </div>
@@ -208,7 +228,13 @@ export default function AlbumClient({ nome, layout, tema, mensagens }: {
       {layout === 'cinema' && (
         <div className="screen" style={{ padding: 0, position: 'relative', background: '#2b2330' }}
           onClick={(e) => { if (!(e.target as HTMLElement).closest('button,a,audio')) setCinemaIdx((cinemaIdx + 1) % total); }}>
-          <div style={{ position: 'absolute', inset: 0, background: 'repeating-linear-gradient(135deg,#4a3a52,#4a3a52 14px,#3f3147 14px,#3f3147 28px)' }} />
+          {fotoCapa ? (
+            <div style={{ position: 'absolute', inset: 0 }}>
+              <img src={fotoCapa} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.3 }} />
+            </div>
+          ) : (
+            <div style={{ position: 'absolute', inset: 0, background: 'repeating-linear-gradient(135deg,#4a3a52,#4a3a52 14px,#3f3147 14px,#3f3147 28px)' }} />
+          )}
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top,rgba(20,14,24,.92),rgba(20,14,24,.15) 45%,rgba(20,14,24,.55))' }} />
           <div style={{ position: 'relative', zIndex: 3, flex: 1, display: 'flex', flexDirection: 'column', padding: '18px 22px 32px' }}>
             <div style={{ display: 'flex', gap: 5, marginBottom: 20 }}>
@@ -225,7 +251,7 @@ export default function AlbumClient({ nome, layout, tema, mensagens }: {
                 <div className="eyebrow" style={{ color: 'var(--gold)', marginBottom: 16 }}>
                   Mensagem {String(i + 1).padStart(2, '0')} de {total}
                 </div>
-                <p style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontStyle: 'italic', lineHeight: 1.35, color: '#fff', margin: '0 0 22px' }}>
+                <p style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontStyle: 'italic', lineHeight: 1.45, color: '#fff', margin: '0 0 22px' }}>
                   &ldquo;{m.mensagem}&rdquo;
                 </p>
                 {m.audio_path && <audio controls preload="metadata" style={{ width: '100%', height: 36, borderRadius: 10, marginBottom: 14 }}><source src={m.audio_path} /></audio>}
@@ -249,6 +275,9 @@ export default function AlbumClient({ nome, layout, tema, mensagens }: {
       {layout === 'minimo' && (
         <div className="screen" style={{ background: '#fffdfb' }}>
           <div style={{ padding: '14px 0', textAlign: 'center' }}>
+            {fotoCapa && (
+              <img src={fotoCapa} alt={nome} style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: '50%', marginBottom: 12 }} />
+            )}
             <div style={{ fontSize: 11, letterSpacing: 5, textTransform: 'uppercase', color: 'var(--muted)', fontWeight: 600 }}>{nome}</div>
           </div>
           {mensagens.map((m, i) => (
@@ -257,7 +286,7 @@ export default function AlbumClient({ nome, layout, tema, mensagens }: {
               justifyContent: 'center', textAlign: 'center', flex: 1, padding: '0 18px',
             }}>
               <div style={{ width: 44, height: 1, background: 'var(--gold)', marginBottom: 40 }} />
-              <p style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: 27, lineHeight: 1.55, margin: '0 0 36px' }}>{m.mensagem}</p>
+              <p style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: 18, lineHeight: 1.55, margin: '0 0 36px' }}>{m.mensagem}</p>
               <div style={{ fontSize: 12, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--neutro)', fontWeight: 600 }}>{m.nome}</div>
               <WppBtn m={m} />
               <AudioPlayer src={m.audio_path} />
