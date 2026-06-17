@@ -1,10 +1,5 @@
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+import { put } from '@vercel/blob';
 import crypto from 'crypto';
-
-const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads');
-const FOTO_DIR = path.join(UPLOAD_DIR, 'fotos');
-const AUDIO_DIR = path.join(UPLOAD_DIR, 'audios');
 
 const ALLOWED_IMAGE = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const ALLOWED_AUDIO = [
@@ -15,10 +10,6 @@ const ALLOWED_AUDIO = [
 
 const MAX_IMAGE = 5 * 1024 * 1024;
 const MAX_AUDIO = 10 * 1024 * 1024;
-
-async function ensureDir(dir: string) {
-  await mkdir(dir, { recursive: true });
-}
 
 function extFromMime(mime: string, filename: string): string {
   if (mime.includes('webm')) return 'webm';
@@ -32,7 +23,7 @@ function extFromMime(mime: string, filename: string): string {
   if (mime.includes('webp')) return 'webp';
   if (mime.includes('gif')) return 'gif';
   const ext = filename.split('.').pop()?.toLowerCase();
-  if (ext && ['webm','m4a','mp3','wav','jpg','png','webp'].includes(ext)) return ext;
+  if (ext && ['webm', 'm4a', 'mp3', 'wav', 'jpg', 'png', 'webp'].includes(ext)) return ext;
   return 'bin';
 }
 
@@ -41,13 +32,15 @@ export async function processarUploadFoto(file: File): Promise<string | null> {
   if (file.size > MAX_IMAGE) throw new Error('Foto muito grande (máx. 5 MB).');
   if (!ALLOWED_IMAGE.includes(file.type)) throw new Error('Formato de foto não permitido.');
 
-  await ensureDir(FOTO_DIR);
   const ext = extFromMime(file.type, file.name);
-  const nome = crypto.randomBytes(16).toString('hex') + '.' + ext;
-  const destino = path.join(FOTO_DIR, nome);
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(destino, buffer);
-  return `/uploads/fotos/${nome}`;
+  const nome = `fotos/${crypto.randomBytes(16).toString('hex')}.${ext}`;
+
+  const blob = await put(nome, file, {
+    access: 'public',
+    contentType: file.type,
+  });
+
+  return blob.url;
 }
 
 export async function processarUploadAudio(file: File): Promise<string | null> {
@@ -55,11 +48,13 @@ export async function processarUploadAudio(file: File): Promise<string | null> {
   if (file.size > MAX_AUDIO) throw new Error('Áudio muito grande (máx. 10 MB).');
   if (!ALLOWED_AUDIO.includes(file.type)) throw new Error('Formato de áudio não permitido.');
 
-  await ensureDir(AUDIO_DIR);
   const ext = extFromMime(file.type, file.name);
-  const nome = crypto.randomBytes(16).toString('hex') + '.' + ext;
-  const destino = path.join(AUDIO_DIR, nome);
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(destino, buffer);
-  return `/uploads/audios/${nome}`;
+  const nome = `audios/${crypto.randomBytes(16).toString('hex')}.${ext}`;
+
+  const blob = await put(nome, file, {
+    access: 'public',
+    contentType: file.type,
+  });
+
+  return blob.url;
 }
