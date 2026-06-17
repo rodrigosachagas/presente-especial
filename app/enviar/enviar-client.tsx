@@ -19,6 +19,8 @@ export default function EnviarClient() {
   const [recSeconds, setRecSeconds] = useState(0);
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState('');
+  const [preview, setPreview] = useState(false);
+  const [fotoPreviewUrl, setFotoPreviewUrl] = useState('');
   const [presente, setPresente] = useState<{ nome_homenageado: string } | null>(null);
 
   const mediaRecRef = useRef<MediaRecorder | null>(null);
@@ -83,8 +85,21 @@ export default function EnviarClient() {
     setRecSeconds(0);
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!nome.trim() || !mensagem.trim()) return;
+    if (foto) {
+      setFotoPreviewUrl(URL.createObjectURL(foto));
+    }
+    setPreview(true);
+    window.scrollTo(0, 0);
+  }
+
+  function handleEdit() {
+    setPreview(false);
+  }
+
+  async function handleConfirm() {
     setErro('');
     setEnviando(true);
     try {
@@ -108,6 +123,54 @@ export default function EnviarClient() {
 
   if (!presente) {
     return <div className="app"><div className="screen screen--center"><p className="lead">Carregando...</p></div></div>;
+  }
+
+  if (preview) {
+    return (
+      <div className="app">
+        <div className="screen">
+          <div className="eyebrow eyebrow--rose" style={{ marginBottom: 5 }}>Confirme sua mensagem</div>
+          <h1 className="h2 mb-20">Ficou do seu jeito?</h1>
+
+          {erro && (
+            <div style={{ background: '#fce4ec', border: '1px solid var(--rose)', borderRadius: 12, padding: '12px 16px', fontSize: 14, color: 'var(--rose)', marginBottom: 14 }}>{erro}</div>
+          )}
+
+          <div style={{ background: 'var(--surface)', border: '1.5px solid var(--line)', borderRadius: 'var(--radius-sm)', padding: 20, marginBottom: 16 }}>
+            <div style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 4 }}>De:</div>
+            <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 16 }}>{nome}</div>
+
+            <div style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 4 }}>Mensagem:</div>
+            <div style={{ fontSize: 15, lineHeight: 1.6, marginBottom: 16, whiteSpace: 'pre-wrap' }}>{mensagem}</div>
+
+            {fotoPreviewUrl && (
+              <>
+                <div style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 4 }}>Foto:</div>
+                <img src={fotoPreviewUrl} alt="Preview" style={{ width: '100%', borderRadius: 12, marginBottom: 16, objectFit: 'cover', maxHeight: 300 }} />
+              </>
+            )}
+
+            {audioUrl && (
+              <>
+                <div style={{ fontSize: 13, color: 'var(--muted)', marginBottom: 4 }}>Áudio:</div>
+                <audio controls preload="metadata" src={audioUrl} style={{ width: '100%', height: 40, borderRadius: 10 }} />
+              </>
+            )}
+          </div>
+
+          <div style={{ display: 'flex', gap: 12, marginTop: 'auto' }}>
+            <button type="button" className="btn" onClick={handleEdit} disabled={enviando}
+              style={{ flex: 1, background: 'transparent', border: '1.5px solid var(--line)', color: 'var(--neutro)', boxShadow: 'none' }}>
+              Editar
+            </button>
+            <button type="button" className="btn btn-primary" onClick={handleConfirm} disabled={enviando}
+              style={{ flex: 1 }}>
+              {enviando ? 'Enviando…' : 'Confirmar'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
