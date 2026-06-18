@@ -21,7 +21,7 @@ export default async function PresentePage({ searchParams }: { searchParams: Pro
         </div>
 
         {parseFotos(p.foto_capa).length > 0 ? (
-          <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 16, width: '100%' }}>
             <Carousel fotos={parseFotos(p.foto_capa)} height={200} borderRadius={22} />
           </div>
         ) : (
