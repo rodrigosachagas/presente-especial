@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { iniciais, dataFormatada, whatsappLink } from '@/lib/helpers';
-import Carousel, { parseFotos } from '@/components/carousel';
+import { iniciais, dataFormatada, whatsappLink, parseFotos } from '@/lib/helpers';
+import Carousel from '@/components/carousel';
 
 interface Msg {
   id: number; nome: string; whatsapp?: string; mensagem: string;

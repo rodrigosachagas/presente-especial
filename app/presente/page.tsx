@@ -1,7 +1,8 @@
 import { buscarPresentePorSlug, contarMensagens } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import Carousel, { parseFotos } from '@/components/carousel';
+import { parseFotos } from '@/lib/helpers';
+import Carousel from '@/components/carousel';
 
 export default async function PresentePage({ searchParams }: { searchParams: Promise<{ c?: string }> }) {
   const { c: slug } = await searchParams;

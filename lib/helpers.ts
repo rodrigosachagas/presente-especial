@@ -45,3 +45,12 @@ export function whatsappLink(telefone: string): string {
   if (num.length <= 11) num = '55' + num;
   return `https://wa.me/${num}`;
 }
+
+export function parseFotos(fotoCapa?: string | null): string[] {
+  if (!fotoCapa) return [];
+  try {
+    const parsed = JSON.parse(fotoCapa);
+    if (Array.isArray(parsed)) return parsed;
+  } catch {}
+  return [fotoCapa];
+}

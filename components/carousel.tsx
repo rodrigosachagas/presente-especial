@@ -2,15 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-export function parseFotos(fotoCapa?: string | null): string[] {
-  if (!fotoCapa) return [];
-  try {
-    const parsed = JSON.parse(fotoCapa);
-    if (Array.isArray(parsed)) return parsed;
-  } catch {}
-  return [fotoCapa];
-}
-
 export default function Carousel({ fotos, height = 180, borderRadius = 12, autoPlay = true }: {
   fotos: string[]; height?: number; borderRadius?: number; autoPlay?: boolean;
 }) {
