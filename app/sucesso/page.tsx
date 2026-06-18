@@ -15,10 +15,6 @@ export default async function SucessoPage() {
   const wppMsg = `💌 Escreva uma mensagem para ${p.nome_homenageado}!\n\n${linkPublico}`;
   const wppUrl = `https://wa.me/?text=${encodeURIComponent(wppMsg)}`;
 
-  // Clear session after reading
-  delete session.presente_criado;
-  await session.save();
-
   return (
     <div className="app">
       <div className="screen screen--center">

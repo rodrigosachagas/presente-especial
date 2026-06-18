@@ -11,8 +11,8 @@ export default function CriarPage() {
   const [data, setData] = useState('');
   const [mensagem, setMensagem] = useState('');
   const [senha, setSenha] = useState('');
-  const [foto, setFoto] = useState<File | null>(null);
-  const [fotoPreview, setFotoPreview] = useState('');
+  const [fotos, setFotos] = useState<File[]>([]);
+  const [fotoPreviews, setFotoPreviews] = useState<string[]>([]);
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
@@ -24,12 +24,17 @@ export default function CriarPage() {
     { v: 'outro', l: '🎁 Outro' },
   ];
 
-  function handleFoto(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0];
-    if (f) {
-      setFoto(f);
-      setFotoPreview(URL.createObjectURL(f));
-    }
+  function handleFotos(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files;
+    if (!files) return;
+    const novas = Array.from(files).slice(0, 10 - fotos.length);
+    setFotos(prev => [...prev, ...novas]);
+    setFotoPreviews(prev => [...prev, ...novas.map(f => URL.createObjectURL(f))]);
+  }
+
+  function removerFoto(idx: number) {
+    setFotos(prev => prev.filter((_, i) => i !== idx));
+    setFotoPreviews(prev => prev.filter((_, i) => i !== idx));
   }
 
   async function handleSubmit() {
@@ -42,7 +47,7 @@ export default function CriarPage() {
       fd.append('data', data);
       fd.append('mensagem', mensagem);
       fd.append('senha', senha);
-      if (foto) fd.append('foto', foto);
+      fotos.forEach(f => fd.append('fotos', f));
 
       const res = await fetch('/api/criar', { method: 'POST', body: fd });
       const json = await res.json();
@@ -131,30 +136,35 @@ export default function CriarPage() {
         {step === 1 && (
           <>
             <div className="eyebrow eyebrow--rose" style={{ marginBottom: 5 }}>Passo 2 de 4</div>
-            <h2 className="h2 mb-20">Foto de capa</h2>
-            {fotoPreview ? (
-              <div className="photo" style={{ height: 200, borderRadius: 18, marginBottom: 16, position: 'relative' }}>
-                <img src={fotoPreview} alt="Capa" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 18 }} />
-                <button type="button" onClick={() => { setFoto(null); setFotoPreview(''); }}
-                  style={{
-                    position: 'absolute', top: 8, right: 8, width: 32, height: 32,
-                    borderRadius: '50%', background: 'rgba(0,0,0,.5)', color: '#fff',
-                    border: 'none', fontSize: 16, cursor: 'pointer', display: 'flex',
-                    alignItems: 'center', justifyContent: 'center',
-                  }}>×</button>
+            <h2 className="h2 mb-20">Fotos de capa</h2>
+            {fotoPreviews.length > 0 && (
+              <div style={{ display: 'flex', gap: 8, overflowX: 'auto', marginBottom: 14, paddingBottom: 4 }}>
+                {fotoPreviews.map((url, i) => (
+                  <div key={i} style={{ position: 'relative', flexShrink: 0, width: 120, height: 120, borderRadius: 14, overflow: 'hidden' }}>
+                    <img src={url} alt={`Foto ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <button type="button" onClick={() => removerFoto(i)}
+                      style={{
+                        position: 'absolute', top: 4, right: 4, width: 24, height: 24,
+                        borderRadius: '50%', background: 'rgba(0,0,0,.6)', color: '#fff',
+                        border: 'none', fontSize: 14, cursor: 'pointer', display: 'flex',
+                        alignItems: 'center', justifyContent: 'center', lineHeight: 1,
+                      }}>&times;</button>
+                  </div>
+                ))}
               </div>
-            ) : (
+            )}
+            {fotos.length < 10 && (
               <label className="upload" style={{ cursor: 'pointer', marginBottom: 16 }}>
                 <span className="ico">📷</span>
                 <div style={{ flex: 1 }}>
-                  <div className="upl-title">Escolher foto de capa</div>
-                  <div className="upl-sub">Câmera ou galeria · máx. 5 MB</div>
+                  <div className="upl-title">{fotos.length === 0 ? 'Escolher fotos de capa' : 'Adicionar mais fotos'}</div>
+                  <div className="upl-sub">Até 10 fotos · máx. 5 MB cada</div>
                 </div>
-                <input type="file" accept="image/*" ref={fileRef} style={{ display: 'none' }}
-                  onChange={handleFoto} />
+                <input type="file" accept="image/*" multiple ref={fileRef} style={{ display: 'none' }}
+                  onChange={handleFotos} />
               </label>
             )}
-            <p className="lead" style={{ fontSize: 13 }}>A foto aparecerá na página pública e no álbum.</p>
+            <p className="lead" style={{ fontSize: 13 }}>As fotos aparecerão em carrossel na página pública e no álbum.</p>
           </>
         )}
 

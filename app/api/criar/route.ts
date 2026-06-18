@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     const data = (fd.get('data') as string) || null;
     const mensagem = (fd.get('mensagem') as string) || null;
     const senha = (fd.get('senha') as string)?.trim();
-    const fotoFile = fd.get('foto') as File | null;
+    const fotoFiles = fd.getAll('fotos') as File[];
 
     if (!nome) return NextResponse.json({ error: 'Nome é obrigatório' }, { status: 400 });
     if (!senha || senha.length < 4) return NextResponse.json({ error: 'Senha deve ter pelo menos 4 caracteres' }, { status: 400 });
@@ -25,8 +25,13 @@ export async function POST(request: Request) {
     const senhaHash = await bcrypt.hash(senha, 10);
 
     let fotoCapa: string | null = null;
-    if (fotoFile && fotoFile.size > 0) {
-      fotoCapa = await processarUploadFoto(fotoFile);
+    const fotosValidas = fotoFiles.filter(f => f && f.size > 0);
+    if (fotosValidas.length > 0) {
+      const urls = await Promise.all(fotosValidas.map(f => processarUploadFoto(f)));
+      const urlsFiltradas = urls.filter(Boolean) as string[];
+      if (urlsFiltradas.length > 0) {
+        fotoCapa = JSON.stringify(urlsFiltradas);
+      }
     }
 
     const id = await criarPresente({

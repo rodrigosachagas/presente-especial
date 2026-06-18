@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { iniciais, dataFormatada, whatsappLink } from '@/lib/helpers';
+import Carousel, { parseFotos } from '@/components/carousel';
 
 interface Msg {
   id: number; nome: string; whatsapp?: string; mensagem: string;
@@ -61,6 +62,7 @@ export default function AlbumClient({ nome, layout, tema, fotoCapa, mensagens }:
   const [livroIdx, setLivroIdx] = useState(0);
   const [cinemaIdx, setCinemaIdx] = useState(0);
   const [minimoIdx, setMinimoIdx] = useState(0);
+  const capaFotos = parseFotos(fotoCapa);
 
   const backBtn = (
     <a onClick={() => history.back()} href="/"
@@ -91,9 +93,9 @@ export default function AlbumClient({ nome, layout, tema, fotoCapa, mensagens }:
 
       {layout === 'livro' && (
         <div className="screen" style={{ background: '#fdf8ee' }}>
-          {fotoCapa && (
-            <div style={{ marginBottom: 14, textAlign: 'center' }}>
-              <img src={fotoCapa} alt={nome} style={{ width: '100%', maxHeight: 180, objectFit: 'cover', borderRadius: 12 }} />
+          {capaFotos.length > 0 && (
+            <div style={{ marginBottom: 14 }}>
+              <Carousel fotos={capaFotos} height={180} borderRadius={12} />
             </div>
           )}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
@@ -132,9 +134,9 @@ export default function AlbumClient({ nome, layout, tema, fotoCapa, mensagens }:
 
       {layout === 'mural' && (
         <div className="screen" style={{ background: 'var(--bg)' }}>
-          {fotoCapa && (
+          {capaFotos.length > 0 && (
             <div style={{ marginBottom: 14 }}>
-              <img src={fotoCapa} alt={nome} style={{ width: '100%', maxHeight: 160, objectFit: 'cover', borderRadius: 14 }} />
+              <Carousel fotos={capaFotos} height={160} borderRadius={14} />
             </div>
           )}
           <div style={{ marginBottom: 14 }}>
@@ -161,9 +163,9 @@ export default function AlbumClient({ nome, layout, tema, fotoCapa, mensagens }:
 
       {layout === 'tempo' && (
         <div className="screen" style={{ background: 'var(--bg)' }}>
-          {fotoCapa && (
+          {capaFotos.length > 0 && (
             <div style={{ marginBottom: 14 }}>
-              <img src={fotoCapa} alt={nome} style={{ width: '100%', maxHeight: 160, objectFit: 'cover', borderRadius: 14 }} />
+              <Carousel fotos={capaFotos} height={160} borderRadius={14} />
             </div>
           )}
           <div style={{ marginBottom: 16 }}>
@@ -194,9 +196,9 @@ export default function AlbumClient({ nome, layout, tema, fotoCapa, mensagens }:
 
       {layout === 'polaroid' && (
         <div className="screen" style={{ background: '#f1e9da', position: 'relative', overflow: 'auto' }}>
-          {fotoCapa && (
+          {capaFotos.length > 0 && (
             <div style={{ textAlign: 'center', marginBottom: 14 }}>
-              <img src={fotoCapa} alt={nome} style={{ width: 140, height: 140, objectFit: 'cover', borderRadius: '50%', border: '4px solid #fff', boxShadow: '0 8px 20px rgba(43,35,48,.15)' }} />
+              <Carousel fotos={capaFotos} height={140} borderRadius={70} />
             </div>
           )}
           <div style={{ textAlign: 'center', marginBottom: 16 }}>
@@ -228,11 +230,11 @@ export default function AlbumClient({ nome, layout, tema, fotoCapa, mensagens }:
       {layout === 'cinema' && (
         <div className="screen" style={{ padding: 0, position: 'relative', background: '#2b2330' }}
           onClick={(e) => { if (!(e.target as HTMLElement).closest('button,a,audio')) setCinemaIdx((cinemaIdx + 1) % total); }}>
-          {fotoCapa ? (
+          {capaFotos.length > 0 ? (
             <div style={{ position: 'absolute', inset: 0 }}>
-              <img src={fotoCapa} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.3 }} />
+              <Carousel fotos={capaFotos} height={999} borderRadius={0} autoPlay />
             </div>
-          ) : (
+            ) : (
             <div style={{ position: 'absolute', inset: 0, background: 'repeating-linear-gradient(135deg,#4a3a52,#4a3a52 14px,#3f3147 14px,#3f3147 28px)' }} />
           )}
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top,rgba(20,14,24,.92),rgba(20,14,24,.15) 45%,rgba(20,14,24,.55))' }} />
@@ -280,8 +282,8 @@ export default function AlbumClient({ nome, layout, tema, fotoCapa, mensagens }:
       {layout === 'minimo' && (
         <div className="screen" style={{ background: '#fffdfb' }}>
           <div style={{ padding: '14px 0', textAlign: 'center' }}>
-            {fotoCapa && (
-              <img src={fotoCapa} alt={nome} style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: '50%', marginBottom: 12 }} />
+            {capaFotos.length > 0 && (
+              <Carousel fotos={capaFotos} height={80} borderRadius={40} />
             )}
             <div style={{ fontSize: 11, letterSpacing: 5, textTransform: 'uppercase', color: 'var(--muted)', fontWeight: 600 }}>{nome}</div>
           </div>

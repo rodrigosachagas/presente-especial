@@ -1,6 +1,7 @@
 import { buscarPresentePorSlug, contarMensagens } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Carousel, { parseFotos } from '@/components/carousel';
 
 export default async function PresentePage({ searchParams }: { searchParams: Promise<{ c?: string }> }) {
   const { c: slug } = await searchParams;
@@ -18,9 +19,9 @@ export default async function PresentePage({ searchParams }: { searchParams: Pro
           <span className="name">Presente Especial</span>
         </div>
 
-        {p.foto_capa ? (
-          <div className="photo" style={{ height: 200, borderRadius: 22, marginBottom: 16 }}>
-            <img src={p.foto_capa} alt="Capa" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 22 }} />
+        {parseFotos(p.foto_capa).length > 0 ? (
+          <div style={{ marginBottom: 16 }}>
+            <Carousel fotos={parseFotos(p.foto_capa)} height={200} borderRadius={22} />
           </div>
         ) : (
           <div className="photo" style={{
