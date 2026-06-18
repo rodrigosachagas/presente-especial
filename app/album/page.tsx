@@ -22,7 +22,6 @@ export default async function AlbumPage({ searchParams }: { searchParams: Promis
       nome={p.nome_homenageado}
       layout={p.layout_album || 'livro'}
       tema={p.tema_cor || 'romantico'}
-      fotoCapa={p.foto_capa || null}
       mensagens={JSON.parse(JSON.stringify(mensagens))}
     />
   );
