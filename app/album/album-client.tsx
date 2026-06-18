@@ -29,26 +29,9 @@ function WppBtn({ m }: { m: Msg }) {
 function AudioPlayer({ src, small }: { src?: string; small?: boolean }) {
   if (!src) return null;
   return (
-    <div>
-      <audio controls preload="metadata" style={{
-        width: '100%', height: small ? 32 : 38, borderRadius: small ? 8 : 10, marginTop: small ? 6 : 10,
-      }}
-        onError={(e) => {
-          const el = e.currentTarget;
-          const fallback = el.nextElementSibling as HTMLElement;
-          if (fallback) fallback.style.display = 'block';
-          el.style.display = 'none';
-        }}
-      >
-        <source src={src} />
-      </audio>
-      <div style={{ display: 'none', fontSize: 12, color: 'var(--muted)', marginTop: small ? 4 : 8 }}>
-        <a href={src} target="_blank" rel="noopener noreferrer"
-          style={{ color: 'var(--rose)', fontWeight: 600 }}>
-          Ouvir áudio
-        </a>
-      </div>
-    </div>
+    <audio controls preload="none" src={src} style={{
+      width: '100%', height: small ? 32 : 38, borderRadius: small ? 8 : 10, marginTop: small ? 6 : 10,
+    }} />
   );
 }
 
