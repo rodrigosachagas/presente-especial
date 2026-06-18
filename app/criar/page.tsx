@@ -41,15 +41,21 @@ export default function CriarPage() {
     setErro('');
     setEnviando(true);
     try {
-      const fd = new FormData();
-      fd.append('nome', nome);
-      fd.append('tipo', tipo);
-      fd.append('data', data);
-      fd.append('mensagem', mensagem);
-      fd.append('senha', senha);
-      fotos.forEach(f => fd.append('fotos', f));
+      const fotoUrls: string[] = [];
+      for (const f of fotos) {
+        const fd = new FormData();
+        fd.append('foto', f);
+        const upRes = await fetch('/api/upload-foto', { method: 'POST', body: fd });
+        const upJson = await upRes.json();
+        if (!upRes.ok) throw new Error(upJson.error || 'Erro ao enviar foto');
+        if (upJson.url) fotoUrls.push(upJson.url);
+      }
 
-      const res = await fetch('/api/criar', { method: 'POST', body: fd });
+      const res = await fetch('/api/criar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, tipo, data, mensagem, senha, fotoUrls }),
+      });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Erro ao criar');
       router.push('/sucesso');
